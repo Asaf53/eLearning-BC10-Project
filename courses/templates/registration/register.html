@@ -1,0 +1,22 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}
+Sign Up
+{% endblock %}
+
+{% block content %}
+<main class="container form-signin col-12 col-md-6 col-lg-4 col-xl-3 my-5">
+    <h1 class="h3 mb-3 fw-normal">Register</h1>
+    <form action="{% url 'register' %}" class="w-100" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label class="d-block" for="id_username">{{ form.username.label }}</label>
+        {{ form.username }}
+        <label class="d-block" for="id_password1">{{ form.password1.label }}</label>
+        {{ form.password1 }}
+        <label class="d-block" for="id_password2">{{ form.password2.label }}</label>
+        {{ form.password2 }}
+        <button class="btn btn-primary w-100 py-2 my-2" type="submit">Sign in</button>
+        <a href="{% url 'login' %}" class="link-primary">Login</a>
+    </form>
+</main>
+{% endblock %}

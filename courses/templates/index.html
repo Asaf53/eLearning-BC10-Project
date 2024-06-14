@@ -1,0 +1,34 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}
+Home
+{% endblock %}
+
+{% block content %}
+{% if courses %}
+<div class="container my-5">
+    <div class="row mb-2">
+        {% for course in courses %}
+        <div class="card col-md-3 border-0 rounded-0">
+            {% load static %}
+            <a href="#"><img src="{{ course.image.url }}" class="card-img-top rounded-0" alt="..."></a>
+            <div class="card-body p-0">
+                <a href="#" class="link-dark"><h5 class="card-title text-truncate">{{ course.title }}</h5></a>
+                <p class="card-text m-1">{{ course.instructor }}</p>
+                <p class="d-flex align-items-center text-muted m-1 small">
+                    <strong class="me-2 text-dark">4.0</strong>
+                    <i class="bx bxs-star text-warning"></i>
+                    <i class="bx bxs-star text-warning"></i>
+                    <i class="bx bxs-star text-warning"></i>
+                    <i class="bx bxs-star text-warning"></i>
+                    <span>(177)</span>
+                </p>
+                <p class="m-1"><strong>{{ course.price }}$</strong></p>
+                <a href="#" class="btn btn-primary rounded-0">Add to cart</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+{% endblock %}
