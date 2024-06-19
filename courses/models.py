@@ -12,7 +12,7 @@ class Category(models.Model):
 class Course(models.Model):
     instructor = models.ForeignKey(User, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, blank=True, null=True)
-    title = models.CharField(max_length=255)
+    name = models.CharField(max_length=255)
     description = models.TextField()
     price = models.FloatField(default=0.0)
     image = models.ImageField(null=True, blank=True, default='noimage.jpg', upload_to="courses/")

@@ -1,3 +1,5 @@
+{% load cart_tag %}
+{% load course_filters %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -70,11 +72,12 @@
                     </li>
                     {% endif %}
                     <li class="nav-item mt-2 mt-lg-0">
-                        <a class="rounded-0 btn btn-outline-primary position-relative" href="#">
+                        <a class="rounded-0 btn btn-outline-primary position-relative" data-bs-toggle="collapse"
+                            href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
                             <i class="bx bx-basket"></i>
                             <span
                                 class="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-danger">
-                                2
+                                {{request.session.cart|length}}
                             </span>
                         </a>
                     </li>
@@ -82,47 +85,38 @@
             </div>
         </div>
     </nav>
-    <!-- <div class="collapse col-lg-3 col-12 col-md-6 position-absolute end-0 z-1" id="collapseExample">
+    <div class="collapse col-lg-3 col-12 col-md-6 position-absolute end-0 z-1" id="collapseExample">
         <div class="card card-body rounded-0 border-primary">
-            <div class="row g-0">
-                <div class="col-2">
-                    <img src="/assets/images/courses/product-1.webp" class="img-fluid rounded-start" alt="courses-1">
+            {% if request.session.cart %}
+                {% for key, value in request.session.cart.items %}
+                <div class="row g-0 mb-4 align-items-center">
+                    <div class="col-2">
+                        <img src="{{ value.image }}" class="img-fluid rounded-0 w-100" alt="{{ value.name }}">
+                    </div>
+                    <div class="col-8 offset-1">
+                        <h5 class="card-title">{{ value.name }}</h5>
+                        <p class="card-text d-flex align-items-center"><strong>{{ value.price }}</strong></p>
+                    </div>
+                    <div class="col-1">
+                        <a href="{% url 'item_clear' key %}" class="btn btn-transparent border-0 p-0">
+                            <i class="bx bx-x h3 mb-0 text-danger"></i>
+                        </a>
+                    </div>
                 </div>
-                <div class="col-8">
-                    <h5 class="card-title">Card title</h5>
-                    <p class="card-text d-flex align-items-center">1 <i class="bx bx-x"></i> <strong>$49.00</strong></p>
+                {% endfor %}
+                <hr>
+                <div class="col-12 d-flex justify-content-between">
+                    <p class="card-text"><strong>Total:</strong></p>
+                    <p class="card-text"><strong>{{ request.session.cart|cart_total }}</strong></p>
                 </div>
-                <div class="col-2">
-                    <button type="button" class="btn btn-transparent border-0 p-0">
-                        <i class="bx bx-x h3 mb-0 text-danger"></i>
-                    </button>
+                <div class="d-flex mt-2">
+                    <a href="{% url 'cart_detail' %}" class="btn btn-primary rounded-0 col-6 me-2">View Cart</a>
                 </div>
-            </div>
-            <div class="row g-0 mt-4">
-                <div class="col-2">
-                    <img src="/assets/images/courses/product-1.webp" class="img-fluid rounded-start" alt="courses-1">
-                </div>
-                <div class="col-8">
-                    <h5 class="card-title">Card title</h5>
-                    <p class="card-text d-flex align-items-center">1 <i class="bx bx-x"></i> <strong>$49.00</strong></p>
-                </div>
-                <div class="col-2">
-                    <button type="button" class="btn btn-transparent border-0 p-0">
-                        <i class="bx bx-x h3 mb-0 text-danger"></i>
-                    </button>
-                </div>
-            </div>
-            <hr>
-            <div class="col-12 d-flex justify-content-between">
-                <p class="card-text"><strong>Total:</strong></p>
-                <p class="card-text"><strong>$49.00</strong></p>
-            </div>
-            <div class="d-flex mt-2">
-                <a href="#" class="btn btn-primary rounded-0 col-6 me-2">View Cart</a>
-                <a href="#" class="btn btn-primary rounded-0 col-6">Checkout</a>
-            </div>
+            {% else %}
+            <p>Your cart is empty.</p>
+            {% endif %}
         </div>
-    </div> -->
+    </div>
     <section>
         {% block content %}{% endblock %}
     </section>

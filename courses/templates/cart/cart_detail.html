@@ -1,0 +1,33 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}
+Cart Detail
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Image</th>
+                <th scope="col">Name</th>
+                <th scope="col">Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for key,value in request.session.cart.items %}
+            <tr>
+                <th scope="row">1</th>
+                <td><img class="img-thumbnail w-50" src="{{value.image}}" alt="{{ value.name }}"></td>
+                <td>{{value.name}}</td>
+                <td>{{value.price}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="col-12 col-md-3">
+        <button type="submit" class="btn btn-primary rounded-0">Check out</button>
+    </div>
+</div>
+{% endblock %}

@@ -15,8 +15,10 @@ Dashboard
     {% endfor %}
 </div>
 {% endif %}
-{% if courses %}
 <div class="container my-5">
+    {% if perms.courses.add_course %}
+        <a href="#" class="btn btn-primary rounded-0">Add new Course</a>
+    {% endif %}
+
 </div>
-{% endif %}
 {% endblock %}

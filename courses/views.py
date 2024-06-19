@@ -10,6 +10,7 @@ from django.contrib import messages
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .forms import ReviewForm
 from .models import *
+from cart.cart import Cart
 
 
 def index(request):
@@ -75,7 +76,11 @@ def create_review(request):
 
 @login_required
 def dashboard(request):
-    context = {"enrollemts": Enrollment.objects.filter(student_id=request.user.id)}
+    user = request.user
+    if user.groups.filter(name='student').exists():
+        context = {"enrollemts": Enrollment.objects.filter(student_id=request.user.id)}
+    else:
+        context = {"courses": Course.objects.filter(instructor_id=request.user.id)}
     return render(request, "dashboard.html", context)
 
 
@@ -123,3 +128,30 @@ class RegisterView(View):
 def signout(request):
     logout(request)
     return redirect("login")
+
+# cart 
+@login_required
+def cart_add(request, id):
+    cart = Cart(request)
+    course = Course.objects.get(id=id)
+    cart.add(product=course)
+    return redirect("index")
+
+
+@login_required
+def item_clear(request, id):
+    cart = Cart(request)
+    course = Course.objects.get(id=id)
+    cart.remove(course)
+    return redirect("index")
+
+@login_required
+def cart_clear(request):
+    cart = Cart(request)
+    cart.clear()
+    return redirect("cart_detail")
+
+
+@login_required
+def cart_detail(request):
+    return render(request, 'cart/cart_detail.html')

@@ -21,8 +21,8 @@ Home
             <a href="{% url 'course_detail' course.id %}"><img src="{{ course.image.url }}"
                     class="card-img-top rounded-0" alt="..."></a>
             <div class="card-body p-0">
-                <a href="{% url 'course_detail' course.id %}" class="link-dark" title="{{ course.title }}">
-                    <h5 class="card-title text-truncate">{{ course.title }}</h5>
+                <a href="{% url 'course_detail' course.id %}" class="link-dark" title="{{ course.name }}">
+                    <h5 class="card-title text-truncate">{{ course.name }}</h5>
                 </a>
                 <p class="card-text m-1 text-capitalize">{{ course.instructor }}</p>
                 <p class="d-flex align-items-center text-muted m-1 small">
@@ -32,15 +32,12 @@ Home
                             {% for i in "x"|rjust:average_stars %}
                                 <i class="bx bxs-star text-warning"></i>
                             {% endfor %}
-                            <!-- {% if average_stars|floatformat:"1" != average_stars %}
-                                <i class="bx bxs-star-half text-warning"></i>
-                            {% endif %} -->
                         {% endwith %}
                     {% endif %}
                     <span>({{ course.get_reviews.count }})</span>
                 </p>
                 <p class="m-1"><strong>{{ course.price }}$</strong></p>
-                <a href="#" class="btn btn-primary rounded-0">Add to cart</a>
+                <a href="{% url 'cart_add' course.id %}" class="btn btn-primary rounded-0">Add to cart</a>
             </div>
         </div>
         {% endfor %}

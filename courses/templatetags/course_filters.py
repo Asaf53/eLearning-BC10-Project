@@ -8,3 +8,7 @@ def average_stars(reviews):
     if len(reviews) == 0:
         return 0
     return total_stars / len(reviews)
+
+@register.filter
+def cart_total(cart):
+    return sum(float(item['price']) for item in cart.values())
