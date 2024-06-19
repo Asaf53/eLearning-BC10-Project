@@ -6,8 +6,14 @@ Sign Up
 
 {% block content %}
 <main class="container form-signin col-12 col-md-6 col-lg-4 col-xl-3 my-5">
+    {% if form.errors %}
+    <div class="alert alert-info alert-dismissible fade show" role="alert">
+        {{ form.errors }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
     <h1 class="h3 mb-3 fw-normal">Register</h1>
-    <form action="{% url 'register' %}" class="w-100" method="POST" enctype="multipart/form-data">
+    <form action="{% url 'register' %}" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         <label class="d-block" for="id_username">{{ form.username.label }}</label>
         {{ form.username }}

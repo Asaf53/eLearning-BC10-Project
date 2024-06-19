@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
 from datetime import datetime
+from django.db.models import Avg
 
 
 # Create your models here.
@@ -16,7 +17,11 @@ class Course(models.Model):
     price = models.FloatField(default=0.0)
     image = models.ImageField(null=True, blank=True, default='noimage.jpg', upload_to="courses/")
     created_at = models.DateTimeField(auto_now_add=True)
-
+    
+    def get_reviews(self):
+        if self.review_set.all() is not None:
+            return self.review_set.all()
+        return []
 
 class Enrollment(models.Model):
     student = models.ForeignKey(User, on_delete=models.CASCADE)

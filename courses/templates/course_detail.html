@@ -1,0 +1,55 @@
+{% extends "layouts/app.html" %}
+{% block title %}
+{{ course.title }}
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-12 col-md-4">
+            <img src="{{ course.image.url }}" class="img-thumbnail w-100" alt="{{ course.title }}" />
+        </div>
+        <div class="col-12 col-md-8">
+            <div class="card border-0">
+                <div class="card-body">
+                    <h3 class="card-title">{{ course.title }}</h3>
+                    <p class="card-text">{{ course.description }}</p>
+                    <p class="small">Created by {{ course.instructor }}</p>
+                    <button type="submit" class="btn btn-outline-primary rounded-0">Add to Cart</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% if course.get_reviews|length > 0 %}
+        {% for review in course.get_reviews %}
+            <div class="card my-3">
+                <div class="card-body">
+                    {% for i in ""|ljust:review.stars %}
+                    <i class="bx bxs-star text-warning"></i>
+                    {% endfor %}
+                    <p class="mt-1">
+                        <i>{{ review.description }}</i>
+                        <br />
+                        - {{ review.student }}
+                    </p>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+    {% if perms.review.add_review %}
+    <div class="card col-md-3 col-12">
+        <div class="card-body">
+            <h3>Review</h3>
+            {{ review_form.errors }}
+            <form action="{% url 'create-review' %}" method="POST">
+                {% csrf_token %}
+                {{ review_form.as_p }}
+                <input type="hidden" name="student_id" value="{{ request.user.id }}">
+                <input type="hidden" name="course_id" value="{{ course.id }}">
+                <button type="submit" class="btn btn-sm rounded-0 btn-outline-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends "layouts/app.html" %}
+{% load course_filters %}
+
+{% block title %}
+Home
+{% endblock %}
+
+{% block content %}
+
+<nav class="nav p-3 justify-content-center bg-primary">
+    {% for category in categories %}
+        <a class="nav-link text-white link-info" aria-current="page" href="{% url 'category_courses' category.id %}">{{ category.name }}</a>
+    {% endfor %}
+</nav>
+<div class="container my-5">
+{% if courses %}
+    <div class="row mb-2">
+        {% for course in courses %}
+        <div class="card col-md-3 border-0 rounded-0">
+            <a href="{% url 'course_detail' course.id %}"><img src="{{ course.image.url }}"
+                    class="card-img-top rounded-0" alt="..."></a>
+            <div class="card-body p-0">
+                <a href="{% url 'course_detail' course.id %}" class="link-dark" title="{{ course.title }}">
+                    <h5 class="card-title text-truncate">{{ course.title }}</h5>
+                </a>
+                <p class="card-text m-1 text-capitalize">{{ course.instructor }}</p>
+                <p class="d-flex align-items-center text-muted m-1 small">
+                    <strong class="me-2 text-dark">{{ course.get_reviews|average_stars }}</strong>
+                    {% if course.get_reviews.count > 0 %}
+                        {% with course.get_reviews|average_stars as average_stars %}
+                            {% for i in "x"|rjust:average_stars %}
+                                <i class="bx bxs-star text-warning"></i>
+                            {% endfor %}
+                            {% if average_stars|floatformat:"1" != average_stars %}
+                                <i class="bx bxs-star-half text-warning"></i>
+                            {% endif %}
+                        {% endwith %}
+                    {% endif %}
+                    <span>({{ course.get_reviews.count }})</span>
+                </p>
+                <p class="m-1"><strong>{{ course.price }}$</strong></p>
+                <a href="#" class="btn btn-primary rounded-0">Add to cart</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <span>
+        {% if courses.has_previous %}
+        <a href="?page={{ courses.previous_page_number }}">Previous</a>
+        {% endif %}
+        <span>
+            Page <strong>{{ courses.number }}</strong> of <strong>{{ courses.paginator.num_pages }}</strong>.
+        </span>
+        {% if courses.has_next %}
+        <a href="?page={{ courses.next_page_number }}">Next</a>
+        {% endif %}
+    </span>
+</div>
+{% endblock %}
