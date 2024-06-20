@@ -63,6 +63,7 @@ Dashboard
                 <th scope="col">Name</th>
                 <th scope="col">Description</th>
                 <th scope="col">Price</th>
+                <th scope="col">Action</th>
             </tr>
         </thead>
         <tbody>
@@ -80,6 +81,9 @@ Dashboard
             <tr class="text-end">
                 <td colspan="4"><strong>Total:</strong></td>
                 <td colspan="5">{{ enrollment.total|floatformat:2 }}</td>
+            </tr>
+            <tr>
+                <td><a href="" class="btn btn-transparent"><i class="bx bx-show-alt"></i></a></td>
             </tr>
             {% endfor %}
         </tbody>

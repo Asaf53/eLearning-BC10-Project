@@ -4,6 +4,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from .models import Review
 from .models import Course
 from .models import Media
+from django.forms import formset_factory
 
 class ReviewForm(ModelForm):
     class Meta:
@@ -49,4 +50,4 @@ class VideoForm(forms.ModelForm):
 class CourseSearchForm(forms.Form):
     search_query = forms.CharField(label='Search Courses', max_length=100)
 
-VideoFormSet = forms.inlineformset_factory(Course, Media, form=VideoForm, extra=1)
+VideoFormSet = forms.inlineformset_factory(Course, Media, form=VideoForm, extra=1, can_delete=True)

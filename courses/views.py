@@ -178,11 +178,10 @@ def upload_course(request):
             course = course_form.save(commit=False)
             course.instructor = request.user
             course.save()
-            for form in video_formset:
-                video = form.cleaned_data.get('courses_video')
-                name = form.cleaned_data.get('name')
-                if video and name:
-                    Media.objects.create(course=course, name=name, courses_video=video)
+            videos = video_formset.save(commit=False)
+            for video in videos:
+                video.course = course
+                video.save()
             return redirect('course_detail', course_id=course.id)
     else:
         course_form = CourseForm()
