@@ -9,6 +9,9 @@ from django.db.models import Avg
 class Category(models.Model):
     name = models.CharField(max_length=255)
     
+    def __str__(self):
+        return self.name
+    
 class Course(models.Model):
     instructor = models.ForeignKey(User, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, blank=True, null=True)
@@ -25,7 +28,7 @@ class Course(models.Model):
 
 class Enrollment(models.Model):
     student = models.ForeignKey(User, on_delete=models.CASCADE)
-    courses = models.ForeignKey(Course, on_delete=models.CASCADE)
+    courses = models.ManyToManyField(Course)
     total = models.FloatField()
     created_at = models.DateTimeField(auto_now_add=True)
 

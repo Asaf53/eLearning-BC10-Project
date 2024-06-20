@@ -1,6 +1,6 @@
 {% extends "layouts/app.html" %}
 {% block title %}
-{{ course.title }}
+{{ course.name }}
 {% endblock %}
 
 {% block content %}
@@ -36,7 +36,6 @@
             </div>
         {% endfor %}
     {% endif %}
-    {% if perms.review.add_review %}
     <div class="card col-md-3 col-12">
         <div class="card-body">
             <h3>Review</h3>
@@ -50,6 +49,5 @@
             </form>
         </div>
     </div>
-    {% endif %}
 </div>
 {% endblock %}

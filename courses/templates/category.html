@@ -41,18 +41,34 @@ Home
         </div>
         {% endfor %}
     </div>
+    {% else %}
+    <div class="alert alert-info" role="alert">
+        0 Courses
+    </div>
     {% endif %}
 
-    <span>
-        {% if courses.has_previous %}
-        <a href="?page={{ courses.previous_page_number }}">Previous</a>
-        {% endif %}
-        <span>
-            Page <strong>{{ courses.number }}</strong> of <strong>{{ courses.paginator.num_pages }}</strong>.
-        </span>
-        {% if courses.has_next %}
-        <a href="?page={{ courses.next_page_number }}">Next</a>
-        {% endif %}
-    </span>
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+          {% if courses.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page={{ courses.previous_page_number }}">Previous</a></li>
+          {% else %}
+            <li class="page-item disabled"><span class="page-link">Previous</span></li>
+          {% endif %}
+      
+          {% for i in courses.paginator.page_range %}
+            {% if courses.number == i %}
+              <li class="page-item active"><span class="page-link">{{ i }}</span></li>
+            {% else %}
+              <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+            {% endif %}
+          {% endfor %}
+      
+          {% if courses.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ courses.next_page_number }}">Next</a></li>
+          {% else %}
+            <li class="page-item disabled"><span class="page-link">Next</span></li>
+          {% endif %}
+        </ul>
+      </nav>
 </div>
 {% endblock %}

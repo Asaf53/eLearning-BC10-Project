@@ -31,10 +31,9 @@
                         <a class="nav-link active" aria-current="page" href="{% url 'index' %}">Home</a>
                     </li>
                 </ul>
-                <form action="#" class="d-flex" role="search">
+                <form action="{% url 'index' %}" method="get" class="d-flex" role="search">
                     <div class="input-group">
-                        <input type="text" id="searchInput" class="form-control rounded-0 border-primary"
-                            placeholder="Search..." />
+                        <input type="search" class="form-control rounded-0" placeholder="Search" aria-label="Search" name="q" />
                         <button id="searchButton" class="btn btn-primary rounded-0">
                             <i class="bx bx-search"></i>
                         </button>
@@ -107,7 +106,7 @@
                 <hr>
                 <div class="col-12 d-flex justify-content-between">
                     <p class="card-text"><strong>Total:</strong></p>
-                    <p class="card-text"><strong>{{ request.session.cart|cart_total }}</strong></p>
+                    <p class="card-text"><strong>{{ request.session.cart|cart_total|floatformat:2 }}</strong></p>
                 </div>
                 <div class="d-flex mt-2">
                     <a href="{% url 'cart_detail' %}" class="btn btn-primary rounded-0 col-6 me-2">View Cart</a>

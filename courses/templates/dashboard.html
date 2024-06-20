@@ -17,7 +17,74 @@ Dashboard
 {% endif %}
 <div class="container my-5">
     {% if perms.courses.add_course %}
-        <a href="#" class="btn btn-primary rounded-0">Add new Course</a>
+    <a href="{% url 'upload_course' %}" class="btn btn-primary rounded-0">Add new Course</a>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Image</th>
+                <th scope="col">Name</th>
+                <th scope="col">Description</th>
+                <th scope="col">Price</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for course in courses %}
+            <tr>
+                <th scope="row">{{ forloop.counter }}</th>
+                <td class="w-25"><img class="img-thumbnail w-25" src="{{ course.image.url }}" alt="{{ course.name }}">
+                </td>
+                <td>{{course.name}}</td>
+                <td>{{course.description}}</td>
+                <td>{{course.price}}</td>
+                <td>
+                    <a href="#"><i class="bx bx-pencil text-warning h5"></i></a>
+                    <a href="#"><i class="bx bx-trash text-danger h5"></i></a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% else %}
+    {% if enrollments %}
+    <table class="table">
+        <h3>Enrollments</h3>
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Image</th>
+                <th scope="col">Name</th>
+                <th scope="col">Description</th>
+                <th scope="col">Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for enrollment in enrollments %}
+            {% for course in enrollment.courses.all %}
+            <tr>
+                <th scope="row">{{ forloop.counter }}</th>
+                <td class="w-25"><img class="img-thumbnail w-25" src="{{ course.image.url }}" alt="{{ course.name }}">
+                </td>
+                <td>{{course.name}}</td>
+                <td>{{course.description}}</td>
+                <td>{{course.price}}</td>
+            </tr>
+            {% endfor %}
+            <tr class="text-end">
+                <td colspan="4"><strong>Total:</strong></td>
+                <td colspan="5">{{ enrollment.total|floatformat:2 }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+        {% else %}
+        <div class="alert alert-info" role="alert">
+            0 Enrollments
+        </div>
+    {% endif %}
     {% endif %}
 
 </div>

@@ -4,18 +4,24 @@ from django.contrib.auth.models import User
 from django.views import View
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import login_required, permission_required
-from django.contrib.auth.models import Group
+from django.contrib.auth.decorators import login_required, permission_required, user_passes_test
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth.models import Group, Permission
 from django.contrib import messages
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from .forms import ReviewForm
+from .forms import CourseForm, VideoFormSet, CourseSearchForm, ReviewForm
 from .models import *
 from cart.cart import Cart
 
-
+# home page
 def index(request):
     courses_list = Course.objects.all().order_by("-id")
     categories = Category.objects.all()
+
+    search_query = request.GET.get('q')
+    if search_query:
+        courses_list = courses_list.filter(name__icontains=search_query)
+    
     page_num = request.GET.get("page", 1)
 
     paginator = Paginator(courses_list, 9)
@@ -27,10 +33,13 @@ def index(request):
     except EmptyPage:
         courses = paginator.page(paginator.num_pages)
 
-    context = {"courses": courses, "categories": categories}
+
+    search_form = CourseSearchForm()
+
+    context = {"courses": courses, "categories": categories, "search_form": search_form}
     return render(request, "home.html", context)
 
-
+# category page
 def category_courses(request, category_id):
     category = get_object_or_404(Category, pk=category_id)
     courses_list = Course.objects.filter(category=category)
@@ -49,15 +58,16 @@ def category_courses(request, category_id):
     context = {"courses": courses, "categories": categories}
     return render(request, "category.html", context)
 
-
+# course detail
+@login_required
 def course_detail(request, course_id):
     course = get_object_or_404(Course, pk=course_id)
     context = {"course": course, "review_form": ReviewForm}
     return render(request, "course_detail.html", context)
 
-
+# add review
 @login_required
-@permission_required("reviews.add_review")
+@user_passes_test(lambda u: u.groups.filter(name='instructor').exists())
 def create_review(request):
     if request.method == "POST":
         form = ReviewForm(request.POST)
@@ -73,17 +83,17 @@ def create_review(request):
 
     return redirect("course_detail", request.POST["course_id"])
 
-
+# user dashboard
 @login_required
 def dashboard(request):
     user = request.user
     if user.groups.filter(name='student').exists():
-        context = {"enrollemts": Enrollment.objects.filter(student_id=request.user.id)}
+        context = {"enrollments": Enrollment.objects.filter(student_id=request.user.id)}
     else:
         context = {"courses": Course.objects.filter(instructor_id=request.user.id)}
     return render(request, "dashboard.html", context)
 
-
+# change group permission
 @login_required
 def become_instructor(request):
     user = request.user
@@ -99,7 +109,7 @@ def become_instructor(request):
 
     return redirect("dashboard")
 
-
+# auth
 class RegisterView(View):
     def get(self, request):
         if request.user.is_authenticated:
@@ -129,7 +139,7 @@ def signout(request):
     logout(request)
     return redirect("login")
 
-# cart 
+#shopping cart 
 @login_required
 def cart_add(request, id):
     cart = Cart(request)
@@ -155,3 +165,50 @@ def cart_clear(request):
 @login_required
 def cart_detail(request):
     return render(request, 'cart/cart_detail.html')
+
+# upload course
+@login_required
+@permission_required("courses.add_course")
+def upload_course(request):
+    if request.method == 'POST':
+        course_form = CourseForm(request.POST, request.FILES)
+        video_formset = VideoFormSet(request.POST, request.FILES)
+
+        if course_form.is_valid() and video_formset.is_valid():
+            course = course_form.save(commit=False)
+            course.instructor = request.user
+            course.save()
+            videos = video_formset.save(commit=False)
+            for video in videos:
+                video.course = course
+                video.save()
+            return redirect('course_detail', course_id=course.id)
+    else:
+        course_form = CourseForm()
+        video_formset = VideoFormSet()
+
+    return render(request, 'upload_course.html', {
+        'course_form': course_form,
+        'video_formset': video_formset,
+    })
+
+# checkout
+@login_required
+def checkout(request):
+    from functools import reduce
+    cart = request.session.get("cart", {}).items()
+
+    total = 0
+    for id, item in cart:
+        total += float(item['price'])
+
+    enrollment = Enrollment(student=request.user, total=total)
+    enrollment.save()
+
+    for id, item in cart:
+        enrollment.courses.add(Course.objects.filter(name=item['name']).first())
+
+    c = Cart(request)
+    c.clear()
+
+    return redirect('dashboard')
