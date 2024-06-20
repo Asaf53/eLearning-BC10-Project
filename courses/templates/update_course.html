@@ -1,0 +1,27 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}
+Update Course
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>Update Course</h1>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                {{ course_form.as_p }}
+            </div>
+            <h2>Videos</h2>
+            {{ video_formset.management_form }}
+            {% for form in video_formset %}
+                <div class="form-group">
+                    {{ form.id }}
+                    {{ form.name.label_tag }} {{ form.name }}
+                    {{ form.courses_video.label_tag }} {{ form.courses_video }}
+                </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary">Update</button>
+        </form>
+    </div>
+{% endblock %}

@@ -14,6 +14,8 @@ urlpatterns = [
     path('review/create', views.create_review, name="create-review"),
     # upload course
     path('upload/', views.upload_course, name='upload_course'),
+    path('course/<int:pk>/update/', views.update_course, name='update_course'),
+    path('course/<int:pk>/delete/', views.delete_course, name='delete_course'),
 
     # dashboard - change group permission
     path("dashboard", views.dashboard, name="dashboard"),

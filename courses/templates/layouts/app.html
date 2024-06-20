@@ -33,7 +33,8 @@
                 </ul>
                 <form action="{% url 'index' %}" method="get" class="d-flex" role="search">
                     <div class="input-group">
-                        <input type="search" class="form-control rounded-0" placeholder="Search" aria-label="Search" name="q" />
+                        <input type="search" class="form-control rounded-0" placeholder="Search" aria-label="Search"
+                            name="q" />
                         <button id="searchButton" class="btn btn-primary rounded-0">
                             <i class="bx bx-search"></i>
                         </button>
@@ -87,30 +88,30 @@
     <div class="collapse col-lg-3 col-12 col-md-6 position-absolute end-0 z-1" id="collapseExample">
         <div class="card card-body rounded-0 border-primary">
             {% if request.session.cart %}
-                {% for key, value in request.session.cart.items %}
-                <div class="row g-0 mb-4 align-items-center">
-                    <div class="col-2">
-                        <img src="{{ value.image }}" class="img-fluid rounded-0 w-100" alt="{{ value.name }}">
-                    </div>
-                    <div class="col-8 offset-1">
-                        <h5 class="card-title">{{ value.name }}</h5>
-                        <p class="card-text d-flex align-items-center"><strong>{{ value.price }}</strong></p>
-                    </div>
-                    <div class="col-1">
-                        <a href="{% url 'item_clear' key %}" class="btn btn-transparent border-0 p-0">
-                            <i class="bx bx-x h3 mb-0 text-danger"></i>
-                        </a>
-                    </div>
+            {% for key, value in request.session.cart.items %}
+            <div class="row g-0 mb-4 align-items-center">
+                <div class="col-2">
+                    <img src="{{ value.image }}" class="img-fluid rounded-0 w-100" alt="{{ value.name }}">
                 </div>
-                {% endfor %}
-                <hr>
-                <div class="col-12 d-flex justify-content-between">
-                    <p class="card-text"><strong>Total:</strong></p>
-                    <p class="card-text"><strong>{{ request.session.cart|cart_total|floatformat:2 }}</strong></p>
+                <div class="col-8 offset-1">
+                    <h5 class="card-title">{{ value.name }}</h5>
+                    <p class="card-text d-flex align-items-center"><strong>{{ value.price }}</strong></p>
                 </div>
-                <div class="d-flex mt-2">
-                    <a href="{% url 'cart_detail' %}" class="btn btn-primary rounded-0 col-6 me-2">View Cart</a>
+                <div class="col-1">
+                    <a href="{% url 'item_clear' key %}" class="btn btn-transparent border-0 p-0">
+                        <i class="bx bx-x h3 mb-0 text-danger"></i>
+                    </a>
                 </div>
+            </div>
+            {% endfor %}
+            <hr>
+            <div class="col-12 d-flex justify-content-between">
+                <p class="card-text"><strong>Total:</strong></p>
+                <p class="card-text"><strong>{{ request.session.cart|cart_total|floatformat:2 }}</strong></p>
+            </div>
+            <div class="d-flex mt-2">
+                <a href="{% url 'cart_detail' %}" class="btn btn-primary rounded-0 col-6 me-2">View Cart</a>
+            </div>
             {% else %}
             <p>Your cart is empty.</p>
             {% endif %}

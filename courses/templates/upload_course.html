@@ -18,26 +18,73 @@ Course Upload
 <div class="container my-5">
     {% if perms.courses.add_course %}
     <h1>Upload Course</h1>
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group">
+            {{ course_form.as_p }}
+        </div>
+        <h2>Videos</h2>
+        <div id="video_formset">
+            {% for form in video_formset %}
             <div class="form-group">
-                {{ course_form.as_p }}
+                {{ form.name.label_tag }} {{ form.name }}
+                {{ form.courses_video.label_tag }} {{ form.courses_video }}
             </div>
-            <div class="form-group">
-                {{ video_formset.management_form }}
-                {% for form in video_formset %}
-                    {% if not form.empty_form %}
-                        <div class="form-group mb-3">
-                            {{ form.id }}
-                            {{ form.name.label_tag }} {{ form.name }}
-                            {{ form.courses_video.label_tag }} {{ form.courses_video }}
-                        </div>
-                    {% endif %}
-                {% endfor %}
-            </div>
-            <button type="submit" class="btn btn-primary">Upload</button>
-        </form>
+            {% endfor %}
+        </div>
+        <button type="button" id="add_more" class="btn btn-secondary mt-3">Add More Videos</button>
+        <button type="submit" class="btn btn-primary mt-3">Upload</button>
+    </form>
     {% endif %}
-
 </div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        var formCount = {{ video_formset.total_form_count }};
+        $("#add_more").click(function() {
+            var formHtml = `
+            <div class="form-group video-form">
+                <label for="id_form-${formCount}-name">Name:</label>
+                <input type="text" name="form-${formCount}-name" class="form-control" id="id_form-${formCount}-name">
+                <label for="id_form-${formCount}-courses_video">Video file:</label>
+                <input type="file" name="form-${formCount}-courses_video" class="form-control" id="id_form-${formCount}-courses_video">
+                <button type="button" class="btn btn-danger remove-video">Remove</button>
+            </div>`;
+            $("#video_formset").append(formHtml);
+
+            // Update total form count
+            var totalForms = $("#id_form-TOTAL_FORMS");
+            totalForms.val(parseInt(totalForms.val()) + 1);
+            formCount++;
+        });
+
+        // Remove video form
+        $("#video_formset").on("click", ".remove-video", function() {
+            $(this).closest('.video-form').remove();
+
+            // Decrease total form count
+            var totalForms = $("#id_form-TOTAL_FORMS");
+            totalForms.val(parseInt(totalForms.val()) - 1);
+
+            // Reindex forms
+            $("#video_formset .video-form").each(function(index) {
+                $(this).find("input, label").each(function() {
+                    var oldId = $(this).attr("id");
+                    if (oldId) {
+                        var newId = oldId.replace(/\d+/, index);
+                        $(this).attr("id", newId);
+                    }
+                    var oldName = $(this).attr("name");
+                    if (oldName) {
+                        var newName = oldName.replace(/\d+/, index);
+                        $(this).attr("name", newName);
+                    }
+                });
+            });
+
+            formCount--;
+        });
+    });
+</script>
 {% endblock %}

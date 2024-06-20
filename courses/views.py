@@ -55,7 +55,7 @@ def category_courses(request, category_id):
     except EmptyPage:
         courses = paginator.page(paginator.num_pages)
 
-    context = {"courses": courses, "categories": categories}
+    context = {"courses": courses, "categories": categories, 'category':category}
     return render(request, "category.html", context)
 
 # course detail
@@ -178,10 +178,11 @@ def upload_course(request):
             course = course_form.save(commit=False)
             course.instructor = request.user
             course.save()
-            videos = video_formset.save(commit=False)
-            for video in videos:
-                video.course = course
-                video.save()
+            for form in video_formset:
+                video = form.cleaned_data.get('courses_video')
+                name = form.cleaned_data.get('name')
+                if video and name:
+                    Media.objects.create(course=course, name=name, courses_video=video)
             return redirect('course_detail', course_id=course.id)
     else:
         course_form = CourseForm()
@@ -192,10 +193,36 @@ def upload_course(request):
         'video_formset': video_formset,
     })
 
+# update course
+@login_required
+def update_course(request, pk):
+    course = get_object_or_404(Course, pk=pk)
+    if request.method == 'POST':
+        course_form = CourseForm(request.POST, request.FILES, instance=course)
+        video_formset = VideoFormSet(request.POST, request.FILES, instance=course)
+
+        if course_form.is_valid() and video_formset.is_valid():
+            course_form.save()
+            video_formset.save()
+            return redirect('course_detail', course_id=course.pk)
+    else:
+        course_form = CourseForm(instance=course)
+        video_formset = VideoFormSet(instance=course)
+    
+    return render(request, 'update_course.html', {
+        'course_form': course_form,
+        'video_formset': video_formset,
+    })
+# delete course
+@login_required
+def delete_course(request, pk):
+    course = get_object_or_404(Course, pk=pk)
+    course.delete()
+    return redirect('dashboard')
+
 # checkout
 @login_required
 def checkout(request):
-    from functools import reduce
     cart = request.session.get("cart", {}).items()
 
     total = 0
