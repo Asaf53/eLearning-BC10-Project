@@ -64,16 +64,19 @@ def category_courses(request, category_id):
     return render(request, "category.html", context)
 
 # course detail
-@login_required
+# @login_required
 def course_detail(request, course_id):
     course = get_object_or_404(Course, pk=course_id)
     videos = Media.objects.filter(course=course)
     is_enrolled = False
+    is_student = False
+    if request.user.groups.filter(name='student').exists():
+        is_student = True
     if request.user.is_authenticated:
         if Enrollment.objects.filter(student=request.user, courses=course).exists():
             is_enrolled = True
             messages.info(request, "You are already enrolled in this course.")
-    context = {"course": course, "review_form": ReviewForm, "is_enrolled": is_enrolled, "videos": videos}
+    context = {"course": course, "review_form": ReviewForm, "is_enrolled": is_enrolled, "videos": videos, "is_student": is_student}
     return render(request, "course_detail.html", context)
 
 # add review

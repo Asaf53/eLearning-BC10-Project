@@ -64,6 +64,7 @@
             </div>
         {% endfor %}
     {% endif %}
+    {% if is_student %}
     <div class="card col-md-3 col-12">
         <div class="card-body">
             <h3>Review</h3>
@@ -77,5 +78,6 @@
             </form>
         </div>
     </div>
+    {% endif %}
 </div>
 {% endblock %}
