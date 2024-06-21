@@ -4,6 +4,16 @@
 {% endblock %}
 
 {% block content %}
+{% if messages %}
+<div>
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
 <div class="container my-5">
     <div class="row">
         <div class="col-12 col-md-4">
@@ -15,7 +25,11 @@
                     <h3 class="card-title">{{ course.name }}</h3>
                     <p class="card-text">{{ course.description }}</p>
                     <p class="small">Created by {{ course.instructor }}</p>
+                    {% if not is_enrolled %}
                     <a href="{% url 'cart_add' course.id %}" class="btn btn-outline-primary rounded-0">Add to Cart</a>
+                    {% else %}
+                    <a href="#" class="btn btn-outline-danger rounded-0 disabled">You are already enrolled in this course.</a>
+                    {% endif %}
                 </div>
             </div>
         </div>

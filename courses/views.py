@@ -36,7 +36,12 @@ def index(request):
 
     search_form = CourseSearchForm()
 
-    context = {"courses": courses, "categories": categories, "search_form": search_form}
+    enrolled_courses = []
+    if request.user.is_authenticated:
+        enrolled_courses = Enrollment.objects.filter(student=request.user).values_list('courses', flat=True)
+
+
+    context = {"courses": courses, "categories": categories, "search_form": search_form, "enrolled_courses": enrolled_courses}
     return render(request, "home.html", context)
 
 # category page
@@ -62,7 +67,12 @@ def category_courses(request, category_id):
 @login_required
 def course_detail(request, course_id):
     course = get_object_or_404(Course, pk=course_id)
-    context = {"course": course, "review_form": ReviewForm}
+    is_enrolled = False
+    if request.user.is_authenticated:
+        if Enrollment.objects.filter(student=request.user, courses=course).exists():
+            is_enrolled = True
+            messages.info(request, "You are already enrolled in this course.")
+    context = {"course": course, "review_form": ReviewForm, "is_enrolled": is_enrolled}
     return render(request, "course_detail.html", context)
 
 # add review

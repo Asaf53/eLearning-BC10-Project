@@ -37,7 +37,11 @@ Home
                     <span>({{ course.get_reviews.count }})</span>
                 </p>
                 <p class="m-1"><strong>{{ course.price }}$</strong></p>
+                {% if course.id not in enrolled_courses %}
                 <a href="{% url 'cart_add' course.id %}" class="btn btn-primary rounded-0">Add to cart</a>
+                {% else %}
+                <a href="#" class="btn btn-outline-danger rounded-0 disabled">You are already enrolled in this course.</a>
+                {% endif %}
             </div>
         </div>
         {% endfor %}
