@@ -16,24 +16,33 @@ Course Upload
 </div>
 {% endif %}
 <div class="container my-5">
+    {% if course_form.errors %}
+    <div class="alert alert-info alert-dismissible fade show" role="alert">
+        {{ course_form.errors }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
     {% if perms.courses.add_course %}
     <h1>Upload Course</h1>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <div class="form-group">
-            {{ course_form.as_p }}
-        </div>
-        <h2>Videos</h2>
-        <div id="video_formset">
-            {% for form in video_formset %}
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
             <div class="form-group">
-                {{ form.name.label_tag }} {{ form.name }}
-                {{ form.courses_video.label_tag }} {{ form.courses_video }}
+                {{ course_form.as_p }}
             </div>
-            {% endfor %}
-        </div>
-        <button type="submit" class="btn btn-primary mt-3">Upload</button>
-    </form>
+            <div class="form-group">
+                {{ video_formset.management_form }}
+                {% for form in video_formset %}
+                    {% if not form.empty_form %}
+                        <div class="form-group mb-3">
+                            {{ form.id }}
+                            {{ form.name.label_tag }} {{ form.name }}
+                            {{ form.courses_video.label_tag }} {{ form.courses_video }}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <button type="submit" class="btn btn-primary">Upload</button>
+        </form>
     {% endif %}
 </div>
 {% endblock %}
