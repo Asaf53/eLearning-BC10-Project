@@ -213,6 +213,7 @@ def update_course(request, pk):
         if course_form.is_valid() and video_formset.is_valid():
             course_form.save()
             video_formset.save()
+            messages.success(request, "Course updated successfuly")
             return redirect('course_detail', course_id=course.pk)
     else:
         course_form = CourseForm(instance=course)

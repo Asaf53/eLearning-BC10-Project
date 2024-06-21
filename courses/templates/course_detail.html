@@ -25,6 +25,7 @@
                     <h3 class="card-title">{{ course.name }}</h3>
                     <p class="card-text">{{ course.description }}</p>
                     <p class="small">Created by {{ course.instructor }}</p>
+                    <p class="small">Created at {{ course.created_at }}</p>
                     {% if not is_enrolled %}
                     <a href="{% url 'cart_add' course.id %}" class="btn btn-outline-primary rounded-0">Add to Cart</a>
                     {% else %}
