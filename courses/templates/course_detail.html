@@ -34,6 +34,19 @@
                 </div>
             </div>
         </div>
+        <div class="col-12">
+            {% for video in videos %}
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">{{ video.name }}</h5>
+                    <video width="100%" controls>
+                        <source src="{{ video.courses_video.url }}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
     </div>
     {% if course.get_reviews|length > 0 %}
         {% for review in course.get_reviews %}
